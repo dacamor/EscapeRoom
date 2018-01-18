@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.Data.Sqlite;
 
 namespace EscapeRoom
 {
@@ -71,11 +72,37 @@ namespace EscapeRoom
                             (null, '{CohortName}')
                         ");
                         break;
+
+                    case 4:
+                        db.CreateAlumni();
+                        // Ask user to input customer name
+                        Console.WriteLine("Enter name");
+                        string AlumniName = Console.ReadLine();
+                        int CohortId = 0;
+                        Console.WriteLine("What Cohort was the student a part of?");
+                        string NameOfCohort = Console.ReadLine();
+
+                        db.Query($@"SELECT `CohortId` FROM `Cohort` WHERE Cohort.Name = '{NameOfCohort}'", (SqliteDataReader reader) => {
+                            while(reader.Read ())
+                            {
+                                CohortId = reader.GetInt32(0);
+                                Console.WriteLine("CohortId:", CohortId);
+                                Console.WriteLine("CohortName:", NameOfCohort);
+                            }
+                        }
+                        );
+
+                        // Insert customer account into database
+                        db.Insert($@"
+                            INSERT INTO Alumni
+                            (Id, Name, CohortId)
+                            VALUES
+                            (null, '{AlumniName}', '{CohortId}')
+                        ");
+                        break;
+
                 }
-
             } while (choice != 5);
-
-
 
         }
     }

@@ -10,7 +10,7 @@ namespace EscapeRoom
             DatabaseInterface db = new DatabaseInterface();
 
             // Check/create the Account table
-            db.CreateDatabase();
+            // db.CreateBackEnd();
 
             int choice;
 
@@ -21,8 +21,10 @@ namespace EscapeRoom
 
                 switch (choice)
                 {
+                    // BackendInput:
                     // Menu option 1: Create a backend
                     case 1:
+                        db.CreateBackEnd();
                         // Ask user to input customer name
                         string BackendName = Console.ReadLine();
 
@@ -35,11 +37,42 @@ namespace EscapeRoom
                         ");
                         break;
 
-                    // Menu option 5: Exit
-                    case 5:
-                        // need logic
-                    break;
+
+                    // Instructor input:
+                    // Menu option #2
+                    case 2:
+                        db.CreateInstructor();
+                        // Ask user to input customer name
+                        string InstructorName = Console.ReadLine();
+
+                        // Insert customer account into database
+                        db.Insert($@"
+                            INSERT INTO Instructor
+                            (Id, Name)
+                            VALUES
+                            (null, '{InstructorName}')
+                        ");
+                        break;
+
+
+                    // Cohort input:
+                    // Menu option #3
+                    case 3:
+                        db.CreateCohort();
+                        // Ask user to input customer name
+                        string CohortName = Console.ReadLine();
+
+
+                        // Insert customer account into database
+                        db.Insert($@"
+                            INSERT INTO Cohort
+                            (Id, Name)
+                            VALUES
+                            (null, '{CohortName}')
+                        ");
+                        break;
                 }
+
             } while (choice != 5);
 
 

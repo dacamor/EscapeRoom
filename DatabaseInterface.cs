@@ -11,7 +11,7 @@ namespace EscapeRoom
         public DatabaseInterface()
         {
             // Replace {you} with the correct value
-            _connectionString = $"Data Source=/Users/petebird/workspace/csharp/exercises/escapeRoom/EscapeRoom/escaperoom.db";
+            _connectionString = $"Data Source=./escaperoom.db";
             _connection = new SqliteConnection(_connectionString);
         }
 
@@ -19,16 +19,16 @@ namespace EscapeRoom
         {
             using (_connection)
             {
-                _connection.Open ();
-                SqliteCommand dbcmd = _connection.CreateCommand ();
+                _connection.Open();
+                SqliteCommand dbcmd = _connection.CreateCommand();
                 dbcmd.CommandText = command;
 
                 using (SqliteDataReader dataReader = dbcmd.ExecuteReader())
                 {
-                    handler (dataReader);
+                    handler(dataReader);
                 }
 
-                dbcmd.Dispose ();
+                dbcmd.Dispose();
             }
         }
 
@@ -36,11 +36,11 @@ namespace EscapeRoom
         {
             using (_connection)
             {
-                _connection.Open ();
-                SqliteCommand dbcmd = _connection.CreateCommand ();
+                _connection.Open();
+                SqliteCommand dbcmd = _connection.CreateCommand();
                 dbcmd.CommandText = command;
-                dbcmd.ExecuteNonQuery ();
-                dbcmd.Dispose ();
+                dbcmd.ExecuteNonQuery();
+                dbcmd.Dispose();
             }
         }
 
@@ -50,33 +50,34 @@ namespace EscapeRoom
 
             using (_connection)
             {
-                _connection.Open ();
-                SqliteCommand dbcmd = _connection.CreateCommand ();
+                _connection.Open();
+                SqliteCommand dbcmd = _connection.CreateCommand();
                 dbcmd.CommandText = command;
 
-                dbcmd.ExecuteNonQuery ();
+                dbcmd.ExecuteNonQuery();
 
                 this.Query("select last_insert_rowid()",
-                    (SqliteDataReader reader) => {
-                        while (reader.Read ())
+                    (SqliteDataReader reader) =>
+                    {
+                        while (reader.Read())
                         {
                             insertedItemId = reader.GetInt32(0);
                         }
                     }
                 );
 
-                dbcmd.Dispose ();
+                dbcmd.Dispose();
             }
 
             return insertedItemId;
         }
 
-        public void CreateDatabase ()
+        public void CreateBackEnd()
         {
             using (_connection)
             {
                 _connection.Open();
-                SqliteCommand dbcmd = _connection.CreateCommand ();
+                SqliteCommand dbcmd = _connection.CreateCommand();
 
                 // Query the account table to see if table is created
                 dbcmd.CommandText = $"SELECT `Id` FROM `Backend`";
@@ -85,7 +86,7 @@ namespace EscapeRoom
                 {
                     // Try to run the query. If it throws an exception, create the table
                     using (SqliteDataReader reader = dbcmd.ExecuteReader()) { }
-                    dbcmd.Dispose ();
+                    dbcmd.Dispose();
                 }
                 catch (Microsoft.Data.Sqlite.SqliteException ex)
                 {
@@ -99,7 +100,7 @@ namespace EscapeRoom
 
                         try
                         {
-                            dbcmd.ExecuteNonQuery ();
+                            dbcmd.ExecuteNonQuery();
                         }
                         catch (Microsoft.Data.Sqlite.SqliteException crex)
                         {
@@ -108,7 +109,90 @@ namespace EscapeRoom
                     }
                 }
                 _connection.Close();
+
             }
         }
+        // creating the Instructor Table:
+        public void CreateInstructor()
+        {
+            using (_connection)
+            {
+                _connection.Open();
+                SqliteCommand dbcmd = _connection.CreateCommand();
+
+                // Query the account table to see if table is created
+                dbcmd.CommandText = $"SELECT `Id` FROM `Instructor`";
+
+                try
+                {
+                    // Try to run the query. If it throws an exception, create the table
+                    using (SqliteDataReader reader = dbcmd.ExecuteReader()) { }
+                    dbcmd.Dispose();
+                }
+                catch (Microsoft.Data.Sqlite.SqliteException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    if (ex.Message.Contains("no such table"))
+                    {
+                        dbcmd.CommandText = $@"CREATE TABLE `Instructor` (
+                            `Id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                            `Name` TEXT NOT NULL
+                        )";
+
+                        try
+                        {
+                            dbcmd.ExecuteNonQuery();
+                        }
+                        catch (Microsoft.Data.Sqlite.SqliteException crex)
+                        {
+                            Console.WriteLine("Table Instructor already exists. Ignoring");
+                        }
+                    }
+                }
+                _connection.Close();
+            }
+        }
+        // Create Cohort Table
+        public void CreateCohort()
+        {
+            using (_connection)
+            {
+                _connection.Open();
+                SqliteCommand dbcmd = _connection.CreateCommand();
+
+                // Query the account table to see if table is created
+                dbcmd.CommandText = $"SELECT `Id` FROM `Cohort`";
+
+                try
+                {
+                    // Try to run the query. If it throws an exception, create the table
+                    using (SqliteDataReader reader = dbcmd.ExecuteReader()) { }
+                    dbcmd.Dispose();
+                }
+                catch (Microsoft.Data.Sqlite.SqliteException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    if (ex.Message.Contains("no such table"))
+                    {
+                        dbcmd.CommandText = $@"CREATE TABLE `Cohort` (
+                            `Id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                            `Name` TEXT NOT NULL
+                        )";
+
+                        try
+                        {
+                            dbcmd.ExecuteNonQuery();
+                        }
+                        catch (Microsoft.Data.Sqlite.SqliteException crex)
+                        {
+                            Console.WriteLine("Table Cohort already exists. Ignoring");
+                        }
+                    }
+                }
+                _connection.Close();
+            }
+        }
+
+        // 
     }
 }

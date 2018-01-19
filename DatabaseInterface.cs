@@ -216,9 +216,9 @@ namespace EscapeRoom
                         dbcmd.CommandText = $@"CREATE TABLE `Alumni` (
                             `Id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
                             `Name` TEXT NOT NULL,
-                            CONSTRAINT `CohortId`
-                            FOREIGN KEY (CohortId)
-                            REFERENCES Cohort(CohortId)
+                            CONSTRAINT `Id`
+                            FOREIGN KEY (Id)
+                            REFERENCES Cohort(Id)
                         )";
 
                         try

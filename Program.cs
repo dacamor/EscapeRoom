@@ -82,7 +82,7 @@ namespace EscapeRoom
                         Console.WriteLine("What Cohort was the student a part of?");
                         string NameOfCohort = Console.ReadLine();
 
-                        db.Query($@"SELECT `CohortId` FROM `Cohort` WHERE Cohort.Name = '{NameOfCohort}'", (SqliteDataReader reader) => {
+                        db.Query($@"SELECT `Id` FROM `Cohort` WHERE Cohort.Name = '{NameOfCohort}'", (SqliteDataReader reader) => {
                             while(reader.Read ())
                             {
                                 CohortId = reader.GetInt32(0);

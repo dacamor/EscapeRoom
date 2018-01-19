@@ -76,7 +76,7 @@ namespace EscapeRoom
                     case 4:
                         db.CreateAlumni();
                         // Ask user to input customer name
-                        Console.WriteLine("Enter name");
+                        Console.WriteLine("Please enter name");
                         string AlumniName = Console.ReadLine();
                         int CohortId = 0;
                         Console.WriteLine("What Cohort was the student a part of?");

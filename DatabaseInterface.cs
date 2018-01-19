@@ -192,7 +192,47 @@ namespace EscapeRoom
                 _connection.Close();
             }
         }
+        public void CreateAlumni()
+        {
+            using (_connection)
+            {
+                _connection.Open();
+                SqliteCommand dbcmd = _connection.CreateCommand();
 
-        // 
+                // Query the account table to see if table is created
+                dbcmd.CommandText = $"SELECT `Id` FROM `Alumni`";
+
+                try
+                {
+                    // Try to run the query. If it throws an exception, create the table
+                    using (SqliteDataReader reader = dbcmd.ExecuteReader()) { }
+                    dbcmd.Dispose();
+                }
+                catch (Microsoft.Data.Sqlite.SqliteException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    if (ex.Message.Contains("no such table"))
+                    {
+                        dbcmd.CommandText = $@"CREATE TABLE `Alumni` (
+                            `Id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                            `Name` TEXT NOT NULL,
+                            CONSTRAINT `Id`
+                            FOREIGN KEY (Id)
+                            REFERENCES Cohort(Id)
+                        )";
+
+                        try
+                        {
+                            dbcmd.ExecuteNonQuery();
+                        }
+                        catch (Microsoft.Data.Sqlite.SqliteException crex)
+                        {
+                            Console.WriteLine("Table Alumni already exists. Ignoring");
+                        }
+                    }
+                }
+                _connection.Close();
+            }
+        }
     }
 }
